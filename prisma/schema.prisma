@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Using SQLite for local setup, PRD mentions Supabase tracking but keeping it simple locally
+  url      = "file:./dev.db"
+}
+
+// ─── Gamified User Profile ───────────────────────────
+model User {
+  id                    String   @id @default(cuid())
+  email                 String   @unique
+  name                  String
+  role                  String   @default("student") // student, moderator, admin, guest
+  totalTomatoesEarned   Int      @default(0)
+  tomatoesBalance       Int      @default(0)
+  streak                Int      @default(0)
+  farmName              String   @default("My Awesome Farm")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  plots                 Plot[]
+  tomatoEvents          TomatoEvent[]
+  purchases             FarmShopPurchase[]
+}
+
+// ─── Farm Plots ──────────────────────────────────────
+model Plot {
+  id               String   @id @default(cuid())
+  userId           String
+  subject          String
+  treeStage        Int      @default(1) // 1: Seedling to 5: Ancient Tree
+  healthPct        Int      @default(100) // 0 to 100
+  lastWateredAt    DateTime @default(now())
+  tomatoesFromPlot Int      @default(0)
+  treeSkin         String   @default("default")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Tomato Economy Events ───────────────────────────
+model TomatoEvent {
+  id               String   @id @default(cuid())
+  userId           String
+  plotId           String?
+  actionType       String   // "pomodoro", "quiz", "task", "login"
+  tomatoesEarned   Int
+  timestamp        DateTime @default(now())
+  sessionMetadata  String?  // JSON string
+  
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Shop Purchases ──────────────────────────────────
+model FarmShopPurchase {
+  id               String   @id @default(cuid())
+  userId           String
+  itemId           String
+  costTomatoes     Int
+  purchasedAt      DateTime @default(now())
+  equippedOnPlot   String?  // plotId if applicable
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Notes Library ───────────────────────────────────
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   // Markdown content
+  subject   String
+  author    String   @default("Anonymous")
+  upvotes   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Forum (Doubt & Community) ───────────────────────
+model ForumPost {
+  id        String       @id @default(cuid())
+  title     String
+  body      String
+  category  String       @default("general")
+  postType  String       @default("question") // "question" | "answer"
+  author    String       @default("Anonymous")
+  upvotes   Int          @default(0)
+  reported  Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  replies   ForumReply[]
+}
+
+model ForumReply {
+  id        String    @id @default(cuid())
+  body      String
+  author    String    @default("Anonymous")
+  upvotes   Int       @default(0)
+  createdAt DateTime  @default(now())
+  postId    String
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+// ─── Deadlines (Tasks) ───────────────────────────────
+model Deadline {
+  id        String   @id @default(cuid())
+  title     String
+  subject   String
+  type      String   @default("assignment") // "assignment" | "quiz" | "exam" | "task"
+  priority  String   @default("medium")
+  dueDate   DateTime
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ─── Study Sessions (Pomodoro & Rooms) ───────────────
+model StudySession {
+  id          String   @id @default(cuid())
+  room        String
+  subject     String
+  duration    Int      // minutes
+  completedAt DateTime @default(now())
+}
