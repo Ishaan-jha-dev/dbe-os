@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --color-error-container: #fb5151;
+  --color-on-primary: #c8ffe0;
+  --color-secondary-fixed-dim: #ffb0a1;
+  --color-inverse-on-surface: #ba9489;
+  --color-error-dim: #9f0519;
+  --color-surface-container-low: #ffede8;
+  --color-error: #b31b25;
+  --color-primary-fixed: #b9f9d6;
+  --color-secondary-dim: #9c1c07;
+  --color-on-tertiary-fixed: #003d4f;
+  --color-primary-container: #b9f9d6;
+  --color-on-secondary-container: #901200;
+  --color-on-error-container: #570008;
+  --color-on-error: #ffefee;
+  --color-on-surface-variant: #74544a;
+  --color-on-tertiary-fixed-variant: #005c74;
+  --color-tertiary-container: #9ae1ff;
+  --color-surface-container: #ffe2da;
+  --color-on-primary-container: #246147;
+  --color-surface-container-highest: #ffd3c6;
+  --color-secondary-container: #ffc4b8;
+  --color-tertiary-fixed-dim: #8cd3f0;
+  --color-outline-variant: #cca499;
+  --color-primary: #29664c;
+  --color-surface: #fff4f1;
+  --color-tertiary-dim: #00576e;
+  --color-secondary: #ad2913;
+  --color-on-tertiary: #e3f6ff;
+  --color-on-tertiary-container: #005267;
+  --color-surface-container-high: #ffdbd0;
+  --color-surface-dim: #ffc8b7;
+  --color-on-secondary-fixed: #6c0b00;
+  --color-tertiary: #04647d;
+  --color-on-primary-fixed: #0a4f36;
+  --color-on-secondary-fixed-variant: #9e1d08;
+  --color-outline: #916f65;
+  --color-on-surface: #422820;
+  --color-primary-dim: #1b5a40;
+  --color-on-secondary: #ffefec;
+  --color-secondary-fixed: #ffc4b8;
+  --color-surface-variant: #ffd3c6;
+  --color-inverse-primary: #beffdc;
+  --color-on-primary-fixed-variant: #2f6c51;
+  --color-surface-container-lowest: #ffffff;
+  --color-background-app: #fff4f1;
+  --color-surface-bright: #fff4f1;
+  --color-on-background: #422820;
+  --color-inverse-surface: #1c0904;
+  --color-primary-fixed-dim: #abebc8;
+  --color-tertiary-fixed: #9ae1ff;
+  --color-surface-tint: #29664c;
+  
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Be Vietnam Pro", sans-serif;
+}
+
+body {
+  background-color: var(--color-background-app);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
