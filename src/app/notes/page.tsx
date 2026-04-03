@@ -61,16 +61,16 @@ export default function NotesPage() {
             {/* Header */}
             <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div className="space-y-2">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
                         Notes
                     </h1>
-                    <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
+                    <p className="text-slate-600 text-lg max-w-xl leading-relaxed">
                         Community-contributed notes and study resources. Share your knowledge — help others ace their exams.
                     </p>
                 </div>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all text-sm hover-lift flex-shrink-0"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-slate-900 font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all text-sm hover-lift flex-shrink-0"
                 >
                     <Plus className="w-4 h-4" />
                     Contribute Notes
@@ -85,8 +85,8 @@ export default function NotesPage() {
                             key={c.id}
                             onClick={() => setCategoryFilter(c.id)}
                             className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${categoryFilter === c.id
-                                    ? "bg-white/10 text-white"
-                                    : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                                    ? "bg-slate-900/10 text-slate-900"
+                                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-900/5"
                                 }`}
                         >
                             {c.label}
@@ -96,14 +96,14 @@ export default function NotesPage() {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setSort("newest")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "newest" ? "bg-white/10 text-white" : "text-gray-500 hover:text-gray-300"
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "newest" ? "bg-slate-900/10 text-slate-900" : "text-slate-500 hover:text-slate-700"
                             }`}
                     >
                         Newest
                     </button>
                     <button
                         onClick={() => setSort("popular")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "popular" ? "bg-white/10 text-white" : "text-gray-500 hover:text-gray-300"
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "popular" ? "bg-slate-900/10 text-slate-900" : "text-slate-500 hover:text-slate-700"
                             }`}
                     >
                         Popular
@@ -113,7 +113,7 @@ export default function NotesPage() {
 
             {/* Notes grid */}
             {sorted.length === 0 ? (
-                <div className="text-center py-20 text-gray-500">
+                <div className="text-center py-20 text-slate-500">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-lg font-medium">No notes yet</p>
                     <p className="text-sm mt-1">Be the first to contribute!</p>
@@ -126,7 +126,7 @@ export default function NotesPage() {
                             <Link
                                 key={note.id}
                                 href={`/notes/${note.id}`}
-                                className="group glass-panel rounded-xl p-5 border border-white/5 hover:border-indigo-500/20 transition-all hover-lift flex flex-col justify-between h-48"
+                                className="group glass-panel rounded-xl p-5 border border-slate-900/5 hover:border-indigo-500/20 transition-all hover-lift flex flex-col justify-between h-48"
                             >
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
@@ -134,16 +134,16 @@ export default function NotesPage() {
                                             {subjectTitle}
                                         </span>
                                     </div>
-                                    <h3 className="font-semibold text-white group-hover:text-indigo-300 transition-colors line-clamp-2 text-sm">
+                                    <h3 className="font-semibold text-slate-900 group-hover:text-indigo-300 transition-colors line-clamp-2 text-sm">
                                         {note.title}
                                     </h3>
-                                    <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+                                    <p className="text-xs text-slate-500 mt-2 line-clamp-2">
                                         {note.content.replace(/[#*>`\-_]/g, "").slice(0, 120)}...
                                     </p>
                                 </div>
 
-                                <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-                                    <div className="flex items-center gap-3 text-[11px] text-gray-500">
+                                <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-900/5">
+                                    <div className="flex items-center gap-3 text-[11px] text-slate-500">
                                         <span className="flex items-center gap-1">
                                             <User className="w-3 h-3" /> {note.author}
                                         </span>
@@ -160,7 +160,7 @@ export default function NotesPage() {
                                             }}
                                             className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all ${note.upvotedByMe
                                                     ? "bg-indigo-500/20 text-indigo-400"
-                                                    : "bg-white/5 text-gray-500 hover:text-indigo-400"
+                                                    : "bg-slate-900/5 text-slate-500 hover:text-indigo-400"
                                                 }`}
                                         >
                                             <ThumbsUp className="w-3 h-3" /> {note.upvotes}

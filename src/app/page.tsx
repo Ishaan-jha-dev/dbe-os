@@ -2,9 +2,10 @@
 
 import { useFarmStore } from "@/hooks/useFarmStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2 } from "lucide-react";
+import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2, BookOpen, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNotes } from "@/hooks/useNotes";
 
 // Mock tree stage SVGs/renders using standard unicode or CSS
 const TreeStageRenderer = ({ stage, health, skin }: { stage: number, health: number, skin: string }) => {
@@ -146,6 +147,40 @@ const IPadSidebar = () => {
   )
 }
 
+const NoteWidget = () => {
+    const { notes, isLoaded } = useNotes();
+    
+    if (!isLoaded) return <div className="col-span-2 h-24 bg-surface-container animate-pulse rounded-2xl" />;
+    
+    if (notes.length === 0) return (
+        <div className="col-span-2 bg-surface-container/50 border border-dashed border-outline-variant/30 rounded-2xl p-6 text-center">
+            <p className="text-on-surface-variant text-sm font-medium">No notes available yet. Be the first to one!</p>
+            <Link href="/notes" className="text-primary text-xs font-bold mt-2 inline-block">Go to Notes Library</Link>
+        </div>
+    );
+
+    return (
+        <>
+            {notes.slice(0, 2).map((note) => (
+                <Link key={note.id} href={`/notes/${note.id}`}>
+                    <div className="bg-surface-container-lowest border border-outline-variant/15 p-5 rounded-2xl flex flex-col justify-between h-32 hover-lift transition-all">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-tight">{note.subject}</span>
+                            </div>
+                            <h4 className="text-on-surface font-bold text-sm line-clamp-1">{note.title}</h4>
+                            <p className="text-on-surface-variant text-xs mt-1 line-clamp-1">{note.author}</p>
+                        </div>
+                        <div className="text-[10px] text-on-surface-variant/60 font-medium">
+                            {new Date(note.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                </Link>
+            ))}
+        </>
+    );
+};
+
 export default function FarmDashboard() {
   const { totalTomatoesEarned, tomatoesBalance, streak, plots, earnTomatoes, waterPlot } = useFarmStore();
   const [showTomatoAnim, setShowTomatoAnim] = useState(false);
@@ -277,6 +312,19 @@ export default function FarmDashboard() {
               </motion.div>
             ))}
           </div>
+        </section>
+
+        {/* Community Notes Section */}
+        <section className="space-y-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-black font-headline text-on-surface">Community Notes</h2>
+                <Link href="/notes" className="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+                    View All <ChevronRight className="w-4 h-4" />
+                </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <NoteWidget />
+            </div>
         </section>
 
         {/* Secondary Features Grid */}
