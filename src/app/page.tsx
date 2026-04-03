@@ -2,7 +2,7 @@
 
 import { useFarmStore } from "@/hooks/useFarmStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Timer, Droplet, Sprout, Sun, Leaf, Flame } from "lucide-react";
+import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -45,9 +45,22 @@ const IPadSidebar = () => {
     { id: 2, text: "Water the virtual crops", done: true },
     { id: 3, text: "Revise Math formulas for test", done: false },
   ]);
+  const [newTaskText, setNewTaskText] = useState("");
 
   const toggleTask = (id: number) => {
     setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  };
+
+  const addTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTaskText.trim()) return;
+    setTasks([...tasks, { id: Date.now(), text: newTaskText, done: false }]);
+    setNewTaskText("");
+  };
+
+  const deleteTask = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
   const today = new Date();
@@ -93,24 +106,40 @@ const IPadSidebar = () => {
                 {tasks.map((task) => (
                     <li 
                         key={task.id} 
-                        className="flex items-start gap-4 cursor-pointer group"
-                        onClick={() => toggleTask(task.id)}
+                        className="flex items-center justify-between group"
                     >
-                        <span className={`text-4xl leading-none -mt-1 transition-colors ${task.done ? 'text-[#2ecc71]' : 'text-[#3498db] group-hover:text-[#2980b9]'}`}>
-                            <span className="material-symbols-outlined">
-                                {task.done ? 'check_circle' : 'radio_button_unchecked'}
+                        <div className="flex items-start gap-4 cursor-pointer flex-1" onClick={() => toggleTask(task.id)}>
+                            <span className={`text-4xl leading-none -mt-1 transition-colors ${task.done ? 'text-[#2ecc71]' : 'text-[#3498db] group-hover:text-[#2980b9]'}`}>
+                                <span className="material-symbols-outlined">
+                                    {task.done ? 'check_circle' : 'radio_button_unchecked'}
+                                </span>
                             </span>
-                        </span>
-                        <span className={`text-3xl leading-none mt-1 transition-all duration-300 ${
-                            task.done 
-                                ? 'text-[#2c3e50] opacity-60 line-through decoration-wavy decoration-[#2ecc71]' 
-                                : 'text-[#2c3e50] opacity-100'
-                        }`}>
-                            {task.text}
-                        </span>
+                            <span className={`text-3xl leading-none mt-1 transition-all duration-300 ${
+                                task.done 
+                                    ? 'text-[#2c3e50] opacity-60 line-through decoration-wavy decoration-[#2ecc71]' 
+                                    : 'text-[#2c3e50] opacity-100'
+                            }`}>
+                                {task.text}
+                            </span>
+                        </div>
+                        <button onClick={(e) => deleteTask(task.id, e)} className="text-xl text-[#e74c3c] opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[#e74c3c]/10 rounded-full" title="Delete Task">
+                            <Trash2 className="w-5 h-5" />
+                        </button>
                     </li>
                 ))}
             </ul>
+            
+            <form onSubmit={addTask} className="mt-4 flex gap-2 items-center">
+                <input 
+                    type="text" 
+                    value={newTaskText}
+                    onChange={(e) => setNewTaskText(e.target.value)}
+                    placeholder="Add a new task..." 
+                    className="flex-1 bg-transparent border-b-2 border-dashed border-[#95a5a6]/50 focus:border-[#3498db] outline-none text-3xl text-[#2c3e50] py-2 placeholder:text-[#95a5a6]/50 transition-colors"
+                />
+                <button type="submit" className="text-4xl text-[#3498db] hover:text-[#2980b9] font-bold p-2 transition-colors">+</button>
+            </form>
+
             <div className="mt-8 text-center text-[#95a5a6] text-xl opacity-80 italic">-- scribble down ideas! --</div>
         </div>
     </div>
