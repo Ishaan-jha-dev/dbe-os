@@ -88,24 +88,24 @@ export default function ForumPage() {
             {/* Header */}
             <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div className="space-y-2">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-on-surface">
                         Forum
                     </h1>
-                    <p className="text-slate-600 text-lg max-w-xl leading-relaxed">
+                    <p className="text-on-surface-variant text-lg max-w-xl leading-relaxed font-medium">
                         Ask questions, share tips, and learn together with your peers.
                     </p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                     <button
                         onClick={() => { setTempName(username); setShowUsernamePrompt(true); }}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-900/10 text-slate-600 hover:text-slate-900 hover:bg-slate-900/5 text-sm transition-all"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-on-surface/10 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high text-sm transition-all font-bold"
                     >
                         <User className="w-4 h-4" />
                         <span className="hidden sm:inline">{username}</span>
                     </button>
                     <button
                         onClick={handleNewPost}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-slate-900 font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all text-sm hover-lift"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold hover:shadow-lg hover:shadow-primary/25 transition-all text-sm hover-lift"
                     >
                         <Plus className="w-4 h-4" />
                         New Post
@@ -204,10 +204,10 @@ export default function ForumPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <h3 className="font-semibold text-slate-900 group-hover:text-indigo-300 transition-colors line-clamp-2">
+                                    <h3 className="font-black text-on-surface group-hover:text-primary transition-colors line-clamp-2 text-lg tracking-tight">
                                         {post.title}
                                     </h3>
-                                    <p className="text-sm text-slate-500 mt-1 line-clamp-2">{post.body}</p>
+                                    <p className="text-sm text-on-surface-variant mt-1 line-clamp-2 font-medium">{post.body}</p>
                                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-600">
                                         <span>{post.author}</span>
                                         <span>{timeAgo(post.timestamp)}</span>

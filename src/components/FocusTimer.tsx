@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Play, Pause, RotateCcw, ChevronUp, ChevronDown, Coffee, Music, ExternalLink, Headphones } from "lucide-react";
+import { Play, Pause, RotateCcw, ChevronUp, ChevronDown, Coffee, Music, ExternalLink, Volume2, VolumeX } from "lucide-react";
 import { useDailyProgress } from "@/hooks/useDailyProgress";
 
 type TimerState = "setup" | "focus" | "break" | "done";
@@ -12,7 +12,17 @@ export default function FocusTimer() {
     const [state, setState] = useState<TimerState>("setup");
     const [secondsLeft, setSecondsLeft] = useState(0);
     const [totalFocused, setTotalFocused] = useState(0);
-    const [showMusic, setShowMusic] = useState(false);
+    
+    // Audio options
+    const [selectedStream, setSelectedStream] = useState("none");
+    const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    const streams = {
+        lofi: "https://stream.zeno.fm/0r0xa792kw8uv", // Lofi Radio
+        nature: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Demo
+        none: ""
+    };
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const { addMinutes } = useDailyProgress();
 
@@ -34,7 +44,21 @@ export default function FocusTimer() {
         setState("focus");
         setSecondsLeft(focusMins * 60);
         setTotalFocused(0);
+        if (selectedStream !== "none") {
+            setIsPlayingAudio(true);
+        }
     };
+
+    useEffect(() => {
+        if (audioRef.current) {
+            if (isPlayingAudio && selectedStream !== "none") {
+                audioRef.current.src = (streams as any)[selectedStream];
+                audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+            } else {
+                audioRef.current.pause();
+            }
+        }
+    }, [isPlayingAudio, selectedStream]);
 
     useEffect(() => {
         if (state !== "focus" && state !== "break") return;
@@ -65,6 +89,7 @@ export default function FocusTimer() {
     const handlePause = () => {
         clearTimer();
         setState("setup");
+        setIsPlayingAudio(false);
         // Log partial time
         const elapsed = focusMins * 60 - secondsLeft;
         const elapsedMins = Math.floor(elapsed / 60);
@@ -112,6 +137,37 @@ export default function FocusTimer() {
                     </div>
                 </div>
 
+                <div className="space-y-4 mb-6">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-on-surface-variant flex items-center gap-1.5">
+                            <Music className="w-3.5 h-3.5" /> Music & Ambiance
+                        </span>
+                        <div className="flex gap-2">
+                             <a href="https://music.youtube.com" target="_blank" rel="noreferrer" title="YouTube Music">
+                                <button className="p-1.5 rounded-lg bg-surface-container-highest flex items-center justify-center hover:text-red-500 transition-colors">
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                </button>
+                             </a>
+                             <a href="https://open.spotify.com" target="_blank" rel="noreferrer" title="Spotify">
+                                <button className="p-1.5 rounded-lg bg-surface-container-highest flex items-center justify-center hover:text-green-500 transition-colors">
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                </button>
+                             </a>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                        {["none", "lofi", "nature"].map(s => (
+                            <button 
+                                key={s}
+                                onClick={() => setSelectedStream(s)}
+                                className={`py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all border ${selectedStream === s ? 'bg-primary text-on-primary border-primary shadow-sm' : 'bg-surface-container text-on-surface-variant border-outline-variant/10 hover:bg-surface-container-high'}`}
+                            >
+                                {s}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 {!skipBreaks && (
                     <p className="text-center text-xs text-slate-500 mb-3">
                         You&apos;ll have <span className="text-slate-900 font-medium">{breakCount}</span> break{breakCount !== 1 ? "s" : ""}.
@@ -132,59 +188,10 @@ export default function FocusTimer() {
 
                 <button
                     onClick={startFocus}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm transition-all hover:shadow-lg hover:shadow-indigo-500/20"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-slate-900 font-bold text-sm transition-all hover:shadow-lg hover:shadow-indigo-500/20"
                 >
                     <Play className="w-4 h-4" fill="white" /> Start focus session
                 </button>
-
-                <div className="mt-6 pt-4 border-t border-slate-900/10">
-                    <button 
-                        onClick={() => setShowMusic(!showMusic)}
-                        className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-bold transition-all ${showMusic ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-900/5 text-slate-600 hover:bg-slate-900/10'}`}
-                    >
-                        <span className="flex items-center gap-2">
-                            <Headphones className="w-3.5 h-3.5" />
-                            Calming Music
-                        </span>
-                        <ChevronDown className={`w-3 h-3 transition-transform ${showMusic ? 'rotate-180' : ''}`} />
-                    </button>
-                    
-                    {showMusic && (
-                        <div className="mt-3 space-y-3 animate-in slide-in-from-top-2 duration-300">
-                            {/* YT Embed for Lofi */}
-                            <div className="aspect-video rounded-xl overflow-hidden bg-black/5 border border-slate-900/10">
-                                <iframe 
-                                    width="100%" 
-                                    height="100%" 
-                                    src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0" 
-                                    title="Lofi Music" 
-                                    frameBorder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowFullScreen
-                                />
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-2">
-                                <a 
-                                    href="https://open.spotify.com/playlist/37i9dQZF1DWWQRvuiKm9S4" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#1DB954]/10 text-[#1DB954] text-[10px] font-bold hover:bg-[#1DB954]/20 transition-all border border-[#1DB954]/20"
-                                >
-                                    <Music className="w-3 h-3" /> Spotify
-                                </a>
-                                <a 
-                                    href="https://music.youtube.com/search?q=lofi+study" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#FF0000]/10 text-[#FF0000] text-[10px] font-bold hover:bg-[#FF0000]/20 transition-all border border-[#FF0000]/20"
-                                >
-                                    <ExternalLink className="w-3 h-3" /> YT Music
-                                </a>
-                            </div>
-                        </div>
-                    )}
-                </div>
             </div>
         );
     }
@@ -240,17 +247,24 @@ export default function FocusTimer() {
             <div className="flex items-center justify-center gap-3">
                 <button
                     onClick={handlePause}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-slate-900/5 border border-slate-900/10 text-slate-900 text-sm font-medium hover:bg-slate-900/10 transition-colors"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-surface-container border border-outline-variant/10 text-on-surface text-sm font-medium hover:bg-surface-container-high transition-colors"
                 >
                     <Pause className="w-4 h-4" /> End
                 </button>
                 <button
+                    onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                    className={`p-2 rounded-xl transition-all ${isPlayingAudio ? 'bg-primary/10 text-primary' : 'bg-surface-container text-on-surface-variant'}`}
+                >
+                    {isPlayingAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+                <button
                     onClick={handleReset}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-900/5 text-sm transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high text-sm transition-colors"
                 >
                     <RotateCcw className="w-3.5 h-3.5" />
                 </button>
             </div>
+            <audio ref={audioRef} loop />
         </div>
     );
 }

@@ -2,10 +2,9 @@
 
 import { useFarmStore } from "@/hooks/useFarmStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2, BookOpen, ChevronRight } from "lucide-react";
+import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useNotes } from "@/hooks/useNotes";
 
 // Mock tree stage SVGs/renders using standard unicode or CSS
 const TreeStageRenderer = ({ stage, health, skin }: { stage: number, health: number, skin: string }) => {
@@ -147,43 +146,17 @@ const IPadSidebar = () => {
   )
 }
 
-const NoteWidget = () => {
-    const { notes, isLoaded } = useNotes();
-    
-    if (!isLoaded) return <div className="col-span-2 h-24 bg-surface-container animate-pulse rounded-2xl" />;
-    
-    if (notes.length === 0) return (
-        <div className="col-span-2 bg-surface-container/50 border border-dashed border-outline-variant/30 rounded-2xl p-6 text-center">
-            <p className="text-on-surface-variant text-sm font-medium">No notes available yet. Be the first to one!</p>
-            <Link href="/notes" className="text-primary text-xs font-bold mt-2 inline-block">Go to Notes Library</Link>
-        </div>
-    );
-
-    return (
-        <>
-            {notes.slice(0, 2).map((note) => (
-                <Link key={note.id} href={`/notes/${note.id}`}>
-                    <div className="bg-surface-container-lowest border border-outline-variant/15 p-5 rounded-2xl flex flex-col justify-between h-32 hover-lift transition-all">
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-tight">{note.subject}</span>
-                            </div>
-                            <h4 className="text-on-surface font-bold text-sm line-clamp-1">{note.title}</h4>
-                            <p className="text-on-surface-variant text-xs mt-1 line-clamp-1">{note.author}</p>
-                        </div>
-                        <div className="text-[10px] text-on-surface-variant/60 font-medium">
-                            {new Date(note.createdAt).toLocaleDateString()}
-                        </div>
-                    </div>
-                </Link>
-            ))}
-        </>
-    );
-};
-
 export default function FarmDashboard() {
   const { totalTomatoesEarned, tomatoesBalance, streak, plots, earnTomatoes, waterPlot } = useFarmStore();
   const [showTomatoAnim, setShowTomatoAnim] = useState(false);
+  const [notes, setNotes] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/notes")
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setNotes(data.slice(0, 3)))
+      .catch(() => setNotes([]));
+  }, []);
 
   const handleManualWater = (id: string) => {
     waterPlot(id);
@@ -314,19 +287,6 @@ export default function FarmDashboard() {
           </div>
         </section>
 
-        {/* Community Notes Section */}
-        <section className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-black font-headline text-on-surface">Community Notes</h2>
-                <Link href="/notes" className="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
-                    View All <ChevronRight className="w-4 h-4" />
-                </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <NoteWidget />
-            </div>
-        </section>
-
         {/* Secondary Features Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full pt-4">
             <div className="bg-primary text-on-primary rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between shadow-lg shadow-primary/10 hover-lift">
@@ -345,18 +305,25 @@ export default function FarmDashboard() {
 
             <div className="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/15 shadow-sm space-y-6 hover-lift">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-xl font-black font-headline text-on-surface tracking-tight">Farm Activity</h3>
+                    <h3 className="text-xl font-black font-headline text-on-surface tracking-tight">Recent Notes</h3>
+                    <Link href="/notes" className="text-xs font-bold text-primary hover:underline">View All</Link>
                 </div>
                 <div className="space-y-4">
-                    <div className="flex items-center gap-4 bg-surface-container-low border border-outline-variant/10 p-4 rounded-2xl">
-                        <div className="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center shadow-sm shrink-0">
-                            <Droplet className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold font-headline text-on-surface">Math plot watered manually</p>
-                            <p className="text-xs text-on-surface-variant font-medium mt-0.5">+1 Tomato</p>
-                        </div>
-                    </div>
+                    {notes.length === 0 ? (
+                        <p className="text-xs text-on-surface-variant">No notes found. Create one in the Notes library!</p>
+                    ) : (
+                        notes.map((note: any) => (
+                            <Link key={note.id} href={`/notes/${note.id}`} className="flex items-center gap-4 bg-surface-container-low border border-outline-variant/10 p-4 rounded-2xl hover:bg-surface-container transition-colors group">
+                                <div className="w-10 h-10 rounded-full bg-secondary-container text-secondary flex items-center justify-center shadow-sm shrink-0">
+                                    <BookOpen className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold font-headline text-on-surface group-hover:text-primary transition-colors">{note.title}</p>
+                                    <p className="text-xs text-on-surface-variant font-medium mt-0.5">{note.subject}</p>
+                                </div>
+                            </Link>
+                        ))
+                    )}
                 </div>
             </div>
         </section>
