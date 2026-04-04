@@ -2,7 +2,7 @@
 
 import { useFarmStore } from "@/hooks/useFarmStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2, BookOpen } from "lucide-react";
+import { Timer, Droplet, Sprout, Sun, Leaf, Flame, Trash2, BookOpen, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -39,28 +39,26 @@ import { Caveat } from "next/font/google";
 
 const caveat = Caveat({ subsets: ["latin"], weight: ["400", "700"] });
 
+import { useTodos } from "@/hooks/useTodos";
+
 const IPadSidebar = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Complete Physics Chapter 4", done: false },
-    { id: 2, text: "Water the virtual crops", done: true },
-    { id: 3, text: "Revise Math formulas for test", done: false },
-  ]);
+  const { tasks, addTask: persistTask, toggleTask: togglePersistedTask, deleteTask: deletePersistedTask } = useTodos(new Date());
   const [newTaskText, setNewTaskText] = useState("");
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const toggleTask = (id: string) => {
+    togglePersistedTask(id);
   };
 
   const addTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskText.trim()) return;
-    setTasks([...tasks, { id: Date.now(), text: newTaskText, done: false }]);
+    persistTask({ title: newTaskText, subject: "General", time: new Date().toTimeString().substring(0, 5) });
     setNewTaskText("");
   };
 
-  const deleteTask = (id: number, e: React.MouseEvent) => {
+  const deleteTask = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setTasks(tasks.filter(t => t.id !== id));
+    deletePersistedTask(id);
   };
 
   const today = new Date();
@@ -109,17 +107,17 @@ const IPadSidebar = () => {
                         className="flex items-center justify-between group"
                     >
                         <div className="flex items-start gap-4 cursor-pointer flex-1" onClick={() => toggleTask(task.id)}>
-                            <span className={`text-4xl leading-none -mt-1 transition-colors ${task.done ? 'text-[#2ecc71]' : 'text-[#3498db] group-hover:text-[#2980b9]'}`}>
+                            <span className={`text-4xl leading-none -mt-1 transition-colors ${task.completed ? 'text-[#2ecc71]' : 'text-[#3498db] group-hover:text-[#2980b9]'}`}>
                                 <span className="material-symbols-outlined">
-                                    {task.done ? 'check_circle' : 'radio_button_unchecked'}
+                                    {task.completed ? 'check_circle' : 'radio_button_unchecked'}
                                 </span>
                             </span>
                             <span className={`text-3xl leading-none mt-1 transition-all duration-300 ${
-                                task.done 
+                                task.completed
                                     ? 'text-[#2c3e50] opacity-60 line-through decoration-wavy decoration-[#2ecc71]' 
                                     : 'text-[#2c3e50] opacity-100'
                             }`}>
-                                {task.text}
+                                {task.title}
                             </span>
                         </div>
                         <button onClick={(e) => deleteTask(task.id, e)} className="text-xl text-[#e74c3c] opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[#e74c3c]/10 rounded-full" title="Delete Task">
@@ -147,9 +145,13 @@ const IPadSidebar = () => {
 }
 
 export default function FarmDashboard() {
-  const { totalTomatoesEarned, tomatoesBalance, streak, plots, earnTomatoes, waterPlot } = useFarmStore();
+  const { totalTomatoesEarned, tomatoesBalance, streak, plots, earnTomatoes, waterPlot, fetchFarmData, isInitialized } = useFarmStore();
   const [showTomatoAnim, setShowTomatoAnim] = useState(false);
   const [notes, setNotes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!isInitialized) fetchFarmData();
+  }, [isInitialized, fetchFarmData]);
 
   useEffect(() => {
     fetch("/api/notes")
@@ -179,15 +181,20 @@ export default function FarmDashboard() {
                         <p className="text-on-surface-variant max-w-sm font-medium">Your greenhouse is thriving. You have {plots.filter(p=>p.healthPct < 50).length} plots seeking attention.</p>
                     </div>
                 </div>
-                <div className="mt-6 flex flex-wrap gap-3 z-10">
+                <div className="mt-6 flex flex-wrap items-center gap-3 z-10 w-full">
                     <div className="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-full font-bold text-sm shadow-sm border border-outline-variant/10">
                         <span className="text-secondary text-lg">🍅</span>
                         <span className="text-on-surface">Balance: {tomatoesBalance}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-primary bg-primary/10 px-4 py-2 rounded-full font-bold text-sm">
+                    <div className="flex items-center gap-2 text-primary bg-primary/10 px-4 py-2 rounded-full font-bold text-sm border border-primary/20">
                         <Sun className="w-4 h-4" />
                         <span>Rank: {totalTomatoesEarned} XP</span>
                     </div>
+                    <div className="flex-1"></div>
+                    <Link href="/shop" className="group flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary font-bold text-sm rounded-xl shadow-lg shadow-secondary/20 hover:scale-105 active:scale-95 transition-all">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>Visit Farm Shop</span>
+                    </Link>
                 </div>
                 {/* Decorative blurred blob */}
                 <div className="absolute -right-10 -top-10 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>

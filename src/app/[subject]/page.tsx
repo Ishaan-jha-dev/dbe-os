@@ -49,15 +49,15 @@ export default function SubjectPage({ params }: { params: Promise<{ subject: str
 
     if (activeTab === "quiz" && activeModule) {
         return (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-[1600px] mx-auto min-h-screen">
                 <button
                     onClick={() => {
                         setActiveTab("overview");
                         setActiveModuleId(null);
                     }}
-                    className="mb-8 flex items-center text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                    className="mb-6 flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors"
                 >
-                    <ChevronLeft className="w-4 h-4 mr-1" /> Back to Overview
+                    <ChevronLeft className="w-5 h-5 mr-1" /> Dashboard
                 </button>
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -93,21 +93,21 @@ export default function SubjectPage({ params }: { params: Promise<{ subject: str
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto space-y-10">
-            <Link href="/" className="flex items-center text-sm font-medium text-gray-500 hover:text-white transition-colors w-fit">
-                <ChevronLeft className="w-4 h-4 mr-1" /> Dashboard
+            <Link href="/" className="flex items-center text-sm font-bold text-on-surface-variant hover:text-primary transition-colors w-fit">
+                <ChevronLeft className="w-5 h-5 mr-1" /> Dashboard
             </Link>
 
             <header className="space-y-4 border-b border-white/5 pb-10">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                     <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 font-mono text-xs tracking-widest font-bold rounded border border-indigo-500/20 shadow-sm">
+                            <span className="px-3 py-1 bg-primary/10 text-primary font-mono text-xs tracking-widest font-bold rounded border border-primary/20 shadow-sm">
                                 {data.id}
                             </span>
-                            <span className="text-gray-700 font-mono text-sm">|</span>
-                            <span className="text-gray-400 text-sm font-medium">{data.modules.length} Modules</span>
+                            <span className="text-on-surface-variant font-mono text-sm">|</span>
+                            <span className="text-on-surface-variant text-sm font-bold">{data.modules.length} Modules</span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight pt-2">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-headline text-on-surface tracking-tight leading-tight pt-2">
                             {data.title || "Subject"}
                         </h1>
                     </div>
@@ -115,7 +115,7 @@ export default function SubjectPage({ params }: { params: Promise<{ subject: str
                         href={getNotesLink(data.id)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-shrink-0 flex items-center justify-center gap-2 px-6 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group hover-lift"
+                        className="flex-shrink-0 flex items-center justify-center gap-2 px-6 py-4 bg-surface-container-lowest text-on-surface font-bold rounded-xl hover:bg-surface-container transition-all shadow-sm border border-outline-variant/20 group hover-lift"
                     >
                         <BookOpen className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         Access Notes
@@ -125,8 +125,8 @@ export default function SubjectPage({ params }: { params: Promise<{ subject: str
 
             <section className="space-y-6">
                 <div className="flex items-center gap-2 mb-8">
-                    <Activity className="w-5 h-5 text-indigo-400" />
-                    <h2 className="text-2xl font-bold text-white tracking-tight">Quiz Modules</h2>
+                    <Activity className="w-5 h-5 text-primary" />
+                    <h2 className="text-2xl font-bold font-headline text-on-surface tracking-tight">Quiz Modules</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -191,8 +191,8 @@ export default function SubjectPage({ params }: { params: Promise<{ subject: str
             {/* Mode Selection Modal */}
             {showModeSelect && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModeSelect(false)} />
-                    <div className="relative w-full max-w-md glass-panel rounded-2xl border border-white/10 shadow-2xl p-8 animate-in zoom-in-95 fade-in duration-300">
+                    <div className="absolute inset-0 bg-surface/70 backdrop-blur-sm" onClick={() => setShowModeSelect(false)} />
+                    <div className="relative w-full max-w-md bg-[#1a1a1a] rounded-3xl border border-outline-variant/10 shadow-2xl p-8 animate-in zoom-in-95 fade-in duration-300">
                         <h3 className="text-xl font-bold text-white mb-2">Choose Mode</h3>
                         <p className="text-gray-400 text-sm mb-6">Select how you&apos;d like to attempt this quiz.</p>
 
