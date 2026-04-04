@@ -122,3 +122,28 @@ model StudySession {
   duration    Int      // minutes
   completedAt DateTime @default(now())
 }
+
+// ─── Todos ──────────────────────────────────────────
+model Todo {
+  id        String   @id @default(cuid())
+  title     String
+  subject   String
+  time      String
+  completed Boolean  @default(false)
+  date      String
+  createdAt DateTime @default(now())
+}
+
+// ─── Module Progress ─────────────────────────────────
+model ModuleProgress {
+  id        String   @id @default(cuid())
+  userId    String   @default("default-user")
+  subjectId String
+  moduleId  Int
+  score     Int
+  total     Int
+  completed Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, subjectId, moduleId])
+}

@@ -38,7 +38,7 @@ def main():
             val = os.path.join(root, f).replace('\\', '/')
             if val.startswith('./'):
                 val = val[2:]
-            if 'acedbe' in val.lower() or 'commit_' in val:
+            if 'dbe-os' in val.lower() or 'commit_' in val:
                 continue
             all_files.append(val)
             
