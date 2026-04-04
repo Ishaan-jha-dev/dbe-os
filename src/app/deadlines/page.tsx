@@ -24,27 +24,27 @@ const statusConfig: Record<
 > = {
     overdue: {
         label: "Overdue",
-        color: "text-red-400",
-        bg: "bg-red-500/10",
-        border: "border-red-500/20",
+        color: "text-error",
+        bg: "bg-error/10",
+        border: "border-error/20",
     },
     "due-today": {
         label: "Due Today",
-        color: "text-amber-400",
-        bg: "bg-amber-500/10",
-        border: "border-amber-500/20",
+        color: "text-on-surface",
+        bg: "bg-tertiary/20",
+        border: "border-tertiary/30",
     },
     upcoming: {
         label: "Upcoming",
-        color: "text-indigo-400",
-        bg: "bg-indigo-500/10",
-        border: "border-indigo-500/20",
+        color: "text-primary",
+        bg: "bg-primary/10",
+        border: "border-primary/20",
     },
     completed: {
         label: "Completed",
-        color: "text-green-400",
-        bg: "bg-green-500/10",
-        border: "border-green-500/20",
+        color: "text-secondary",
+        bg: "bg-secondary/10",
+        border: "border-secondary/20",
     },
 };
 
@@ -146,7 +146,7 @@ export default function DeadlinesPage() {
     if (!isLoaded) {
         return (
             <div className="flex items-center justify-center py-32">
-                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
@@ -156,24 +156,24 @@ export default function DeadlinesPage() {
             {/* Header */}
             <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div className="space-y-2">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-on-surface font-headline">
                         Deadlines
                     </h1>
-                    <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
+                    <p className="text-on-surface-variant font-medium text-lg max-w-xl leading-relaxed">
                         Never miss a deadline. Track assignments, quizzes, and exams all in one place.
                     </p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                     <button
                         onClick={() => downloadICS(deadlines)}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-gray-300 hover:text-white hover:bg-white/5 font-medium transition-all text-sm"
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest font-medium transition-all text-sm"
                     >
                         <Download className="w-4 h-4" />
                         <span className="hidden sm:inline">Export .ics</span>
                     </button>
                     <button
                         onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all text-sm hover-lift"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold hover:shadow-lg transition-all text-sm hover-lift"
                     >
                         <Plus className="w-4 h-4" />
                         Add Deadline
@@ -183,25 +183,25 @@ export default function DeadlinesPage() {
 
             {/* Nearest deadline countdown */}
             {nearest && (
-                <div className="glass-panel rounded-2xl p-6 border border-indigo-500/20 relative overflow-hidden">
-                    <div className="absolute -top-20 -right-20 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
+                <div className="bg-surface-container-high rounded-2xl p-6 border border-primary/20 relative overflow-hidden">
+                    <div className="absolute -top-20 -right-20 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none" />
                     <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                                <Clock className="w-6 h-6 text-indigo-400" />
+                            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                                <Clock className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">
+                                <p className="text-xs font-bold text-primary uppercase tracking-widest mb-1">
                                     Next Deadline
                                 </p>
-                                <p className="text-white font-semibold text-lg">{nearest.title}</p>
+                                <p className="text-on-surface font-semibold text-lg">{nearest.title}</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <div className="text-2xl sm:text-3xl font-bold text-white">
+                            <div className="text-2xl sm:text-3xl font-bold text-on-surface">
                                 <CountdownTimer dueDate={nearest.dueDate} />
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-on-surface-variant font-medium mt-1">
                                 {new Date(nearest.dueDate).toLocaleDateString("en-IN", {
                                     weekday: "short",
                                     day: "numeric",
@@ -221,16 +221,16 @@ export default function DeadlinesPage() {
                     <button
                         key={tab.key}
                         onClick={() => setFilter(tab.key)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${filter === tab.key
-                                ? "bg-white/10 text-white"
-                                : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all ${filter === tab.key
+                                ? "bg-primary/10 text-primary"
+                                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest"
                             }`}
                     >
                         {tab.label}
                         <span
                             className={`text-xs px-1.5 py-0.5 rounded-full ${filter === tab.key
-                                    ? "bg-white/10 text-white"
-                                    : "bg-white/5 text-gray-600"
+                                    ? "bg-primary/20 text-primary"
+                                    : "bg-surface-container text-on-surface-variant"
                                 }`}
                         >
                             {tab.count}
@@ -241,7 +241,7 @@ export default function DeadlinesPage() {
 
             {/* Grouped deadline cards */}
             {Object.keys(grouped).length === 0 ? (
-                <div className="text-center py-20 text-gray-500">
+                <div className="text-center py-20 text-on-surface-variant">
                     <CalendarClock className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-lg font-medium">No deadlines found</p>
                     <p className="text-sm mt-1">Add your first deadline to get started.</p>
@@ -250,7 +250,7 @@ export default function DeadlinesPage() {
                 <div className="space-y-8">
                     {Object.entries(grouped).map(([subjectName, items]) => (
                         <div key={subjectName} className="space-y-3">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest pl-1">
+                            <h3 className="text-sm font-bold text-on-surface-variant uppercase tracking-widest pl-1">
                                 {subjectName}
                             </h3>
                             <div className="space-y-2">
@@ -261,13 +261,13 @@ export default function DeadlinesPage() {
                                     return (
                                         <div
                                             key={d.id}
-                                            className={`glass-panel rounded-xl p-4 sm:p-5 border transition-all group ${d.completed
-                                                    ? "border-white/5 opacity-60"
+                                            className={`bg-surface-container-low rounded-xl p-4 sm:p-5 border transition-all group ${d.completed
+                                                    ? "border-outline-variant/15 opacity-60"
                                                     : status === "overdue"
-                                                        ? "border-red-500/20 hover:border-red-500/40"
+                                                        ? "border-error/20 hover:border-error/40"
                                                         : status === "due-today"
-                                                            ? "border-amber-500/20 hover:border-amber-500/40"
-                                                            : "border-white/5 hover:border-indigo-500/30"
+                                                            ? "border-tertiary/30 hover:border-tertiary/50 bg-tertiary/5"
+                                                            : "border-outline-variant/20 hover:border-primary/30 hover:shadow-sm"
                                                 }`}
                                         >
                                             <div className="flex items-center justify-between gap-4">
@@ -275,12 +275,12 @@ export default function DeadlinesPage() {
                                                     <button
                                                         onClick={() => toggleComplete(d.id)}
                                                         className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${d.completed
-                                                                ? "border-green-500 bg-green-500/20"
-                                                                : "border-white/20 hover:border-indigo-400"
+                                                                ? "border-secondary bg-secondary/20"
+                                                                : "border-outline-variant/50 hover:border-primary"
                                                             }`}
                                                     >
                                                         {d.completed && (
-                                                            <CheckCircle2 className="w-4 h-4 text-green-400" />
+                                                            <CheckCircle2 className="w-4 h-4 text-secondary" />
                                                         )}
                                                     </button>
 
@@ -288,8 +288,8 @@ export default function DeadlinesPage() {
                                                         <div className="flex items-center gap-2 flex-wrap">
                                                             <h4
                                                                 className={`font-semibold truncate ${d.completed
-                                                                        ? "line-through text-gray-500"
-                                                                        : "text-white"
+                                                                        ? "line-through text-on-surface-variant"
+                                                                        : "text-on-surface"
                                                                     }`}
                                                             >
                                                                 {d.title}
@@ -303,7 +303,7 @@ export default function DeadlinesPage() {
                                                                 {cfg.label}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                                                        <div className="flex items-center gap-3 mt-1 text-xs text-on-surface-variant font-medium">
                                                             <span className="flex items-center gap-1">
                                                                 {typeIcons[d.type]}
                                                                 {d.type.charAt(0).toUpperCase() + d.type.slice(1)}
@@ -317,7 +317,7 @@ export default function DeadlinesPage() {
                                                                 })}
                                                             </span>
                                                             {!d.completed && status !== "overdue" && (
-                                                                <span className="text-gray-600">
+                                                                <span className="text-on-surface-variant opacity-80">
                                                                     <CountdownTimer dueDate={d.dueDate} />
                                                                 </span>
                                                             )}
@@ -327,9 +327,9 @@ export default function DeadlinesPage() {
 
                                                 <button
                                                     onClick={() => deleteDeadline(d.id)}
-                                                    className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500/10 flex items-center justify-center transition-all flex-shrink-0"
+                                                    className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-surface hover:bg-error/10 flex items-center justify-center transition-all flex-shrink-0"
                                                 >
-                                                    <Trash2 className="w-4 h-4 text-gray-500 hover:text-red-400" />
+                                                    <Trash2 className="w-4 h-4 text-on-surface-variant hover:text-error" />
                                                 </button>
                                             </div>
                                         </div>
