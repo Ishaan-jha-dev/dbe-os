@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { getTodosAction, addTodoAction, toggleTodoAction, deleteTodoAction } from "@/actions/todos";
 
 export interface TodoTask {
     id: string;
@@ -9,26 +10,6 @@ export interface TodoTask {
     time: string; // "09:00", "14:30" etc
     completed: boolean;
     date: string; // "2026-03-03" ISO date string
-}
-
-const TODOS_KEY = "dbe_os_todos";
-
-function generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function getStoredTodos(): Record<string, TodoTask[]> {
-    if (typeof window === "undefined") return {};
-    try {
-        const stored = localStorage.getItem(TODOS_KEY);
-        return stored ? JSON.parse(stored) : {};
-    } catch {
-        return {};
-    }
-}
-
-function persistTodos(all: Record<string, TodoTask[]>) {
-    localStorage.setItem(TODOS_KEY, JSON.stringify(all));
 }
 
 export function formatDateKey(d: Date): string {
@@ -41,37 +22,41 @@ export function useTodos(date: Date) {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        const all = getStoredTodos();
-        setTasks(all[dateKey] || []);
-        setIsLoaded(true);
+        setIsLoaded(false);
+        getTodosAction(dateKey)
+            .then(data => {
+                setTasks(data);
+                setIsLoaded(true);
+            })
+            .catch(e => {
+                console.error("Failed to load todos", e);
+                setIsLoaded(true);
+            });
     }, [dateKey]);
-
-    const persist = useCallback(
-        (next: TodoTask[]) => {
-            const all = getStoredTodos();
-            all[dateKey] = next;
-            persistTodos(all);
-        },
-        [dateKey]
-    );
 
     const addTask = useCallback(
         (task: { title: string; subject: string; time: string }) => {
+            // Optimistic update with a temp ID
+            const tempId = Date.now().toString();
+            const optimisticTask: TodoTask = {
+                id: tempId,
+                ...task,
+                completed: false,
+                date: dateKey,
+            };
+            
             setTasks((prev) => {
-                const next = [
-                    ...prev,
-                    {
-                        id: generateId(),
-                        ...task,
-                        completed: false,
-                        date: dateKey,
-                    },
-                ].sort((a, b) => a.time.localeCompare(b.time));
-                persist(next);
-                return next;
+                return [...prev, optimisticTask].sort((a, b) => a.time.localeCompare(b.time));
             });
+            
+            // Background sync
+            addTodoAction({ ...task, date: dateKey })
+                .then(realTask => {
+                    setTasks(prev => prev.map(t => t.id === tempId ? realTask : t));
+                })
+                .catch(console.error);
         },
-        [dateKey, persist]
+        [dateKey]
     );
 
     const toggleTask = useCallback(
@@ -80,22 +65,24 @@ export function useTodos(date: Date) {
                 const next = prev.map((t) =>
                     t.id === id ? { ...t, completed: !t.completed } : t
                 );
-                persist(next);
                 return next;
             });
+            
+            // Send to server
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                toggleTodoAction(id, !task.completed).catch(console.error);
+            }
         },
-        [persist]
+        [tasks]
     );
 
     const deleteTask = useCallback(
         (id: string) => {
-            setTasks((prev) => {
-                const next = prev.filter((t) => t.id !== id);
-                persist(next);
-                return next;
-            });
+            setTasks((prev) => prev.filter((t) => t.id !== id));
+            deleteTodoAction(id).catch(console.error);
         },
-        [persist]
+        []
     );
 
     const completedCount = tasks.filter((t) => t.completed).length;

@@ -26,20 +26,16 @@ export function getDeadlineStatus(deadline: Deadline): DeadlineStatus {
     return "upcoming";
 }
 
+import { getDeadlinesAction, addDeadlineAction, toggleDeadlineAction, deleteDeadlineAction } from "@/actions/deadlines";
+
 export function useDeadlines() {
     const [deadlines, setDeadlines] = useState<Deadline[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
     const fetchDeadlines = useCallback(async () => {
         try {
-            const res = await fetch("/api/deadlines");
-            if (res.ok) {
-                const data = await res.json();
-                setDeadlines(data.map((d: Record<string, unknown>) => ({
-                    ...d,
-                    dueDate: typeof d.dueDate === "string" ? d.dueDate : new Date(d.dueDate as string).toISOString(),
-                })));
-            }
+            const data = await getDeadlinesAction();
+            setDeadlines(data);
         } catch {
             // fallback silently
         }
@@ -52,50 +48,31 @@ export function useDeadlines() {
 
     const addDeadline = useCallback(async (deadline: Omit<Deadline, "id" | "completed">) => {
         try {
-            const res = await fetch("/api/deadlines", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(deadline),
+            const newDeadline = await addDeadlineAction({
+                title: deadline.title,
+                subject: deadline.subject,
+                type: deadline.type,
+                priority: (deadline as any).priority || "medium",
+                dueDate: deadline.dueDate
             });
-            if (res.ok) {
-                const newDeadline = await res.json();
-                setDeadlines((prev) => [...prev, {
-                    ...newDeadline,
-                    dueDate: typeof newDeadline.dueDate === "string" ? newDeadline.dueDate : new Date(newDeadline.dueDate).toISOString(),
-                }]);
-            }
+            setDeadlines((prev) => [...prev, newDeadline as any]);
         } catch {
             // handle silently
         }
     }, []);
 
     const toggleComplete = useCallback(async (id: string) => {
-        try {
-            const res = await fetch(`/api/deadlines/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "toggleComplete" }),
-            });
-            if (res.ok) {
-                const updated = await res.json();
-                setDeadlines((prev) =>
-                    prev.map((d) => d.id === id ? { ...d, completed: updated.completed } : d)
-                );
-            }
-        } catch {
-            // handle silently
-        }
+        setDeadlines((prev) => {
+            const target = prev.find(d => d.id === id);
+            if (!target) return prev;
+            toggleDeadlineAction(id, !target.completed).catch(console.error);
+            return prev.map((d) => d.id === id ? { ...d, completed: !d.completed } : d);
+        });
     }, []);
 
     const deleteDeadline = useCallback(async (id: string) => {
-        try {
-            const res = await fetch(`/api/deadlines/${id}`, { method: "DELETE" });
-            if (res.ok) {
-                setDeadlines((prev) => prev.filter((d) => d.id !== id));
-            }
-        } catch {
-            // handle silently
-        }
+        setDeadlines((prev) => prev.filter((d) => d.id !== id));
+        deleteDeadlineAction(id).catch(console.error);
     }, []);
 
     const getNearestDeadline = useCallback(() => {
