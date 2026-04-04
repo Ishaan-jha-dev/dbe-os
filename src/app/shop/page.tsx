@@ -6,8 +6,8 @@ import { ShoppingBag, Shield, Beaker, TreePine, PaintBucket, Tag } from "lucide-
 export default function Shop() {
   const { tomatoesBalance, spendTomatoes } = useFarmStore();
 
-  const handlePurchase = (item: string, cost: number) => {
-    if (spendTomatoes(cost)) {
+  const handlePurchase = async (item: string, cost: number) => {
+    if (await spendTomatoes(cost)) {
       alert(`Successfully purchased ${item}!`);
     } else {
       alert("Not enough Tomatoes!");
