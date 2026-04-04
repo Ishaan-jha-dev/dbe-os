@@ -67,7 +67,7 @@ export default function ForumPage() {
     if (!isLoaded) {
         return (
             <div className="flex items-center justify-center py-32">
-                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
@@ -121,8 +121,8 @@ export default function ForumPage() {
                             key={c.id}
                             onClick={() => setCategoryFilter(c.id)}
                             className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${categoryFilter === c.id
-                                    ? "bg-slate-900/10 text-slate-900"
-                                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-900/5"
+                                    ? "bg-primary/10 text-primary font-bold shadow-sm"
+                                    : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest"
                                 }`}
                         >
                             {c.label}
@@ -132,14 +132,14 @@ export default function ForumPage() {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setSort("newest")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "newest" ? "bg-slate-900/10 text-slate-900" : "text-slate-500 hover:text-slate-700"
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "newest" ? "bg-primary/10 text-primary font-bold" : "text-on-surface-variant hover:text-on-surface"
                             }`}
                     >
                         Newest
                     </button>
                     <button
                         onClick={() => setSort("popular")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "popular" ? "bg-slate-900/10 text-slate-900" : "text-slate-500 hover:text-slate-700"
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === "popular" ? "bg-primary/10 text-primary font-bold" : "text-on-surface-variant hover:text-on-surface"
                             }`}
                     >
                         Popular
@@ -149,7 +149,7 @@ export default function ForumPage() {
 
             {/* Post list */}
             {filtered.length === 0 ? (
-                <div className="text-center py-20 text-slate-500">
+                <div className="text-center py-20 text-on-surface-variant">
                     <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-lg font-medium">No posts yet</p>
                     <p className="text-sm mt-1">Be the first to start a discussion!</p>
@@ -160,7 +160,7 @@ export default function ForumPage() {
                         <Link
                             key={post.id}
                             href={`/forum/${post.id}`}
-                            className="block glass-panel rounded-xl p-5 border border-slate-900/5 hover:border-indigo-500/20 transition-all group"
+                            className="block bg-surface-container-low rounded-xl p-5 border border-outline-variant/15 hover:border-primary/30 hover:shadow-sm transition-all group"
                         >
                             <div className="flex items-start gap-4">
                                 {/* Upvote */}
@@ -172,13 +172,13 @@ export default function ForumPage() {
                                             toggleUpvotePost(post.id);
                                         }}
                                         className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${post.upvotedByMe
-                                                ? "bg-indigo-500/20 text-indigo-400"
-                                                : "bg-slate-900/5 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10"
+                                                ? "bg-primary/20 text-primary"
+                                                : "bg-surface-container text-on-surface-variant hover:text-primary hover:bg-primary/10"
                                             }`}
                                     >
                                         <ThumbsUp className="w-4 h-4" />
                                     </button>
-                                    <span className={`text-xs font-bold ${post.upvotedByMe ? "text-indigo-400" : "text-slate-500"}`}>
+                                    <span className={`text-xs font-bold ${post.upvotedByMe ? "text-primary" : "text-on-surface-variant"}`}>
                                         {post.upvotes}
                                     </span>
                                 </div>
@@ -194,12 +194,12 @@ export default function ForumPage() {
                                             {post.postType}
                                         </span>
                                         {post.category !== "general" && (
-                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-900/5 text-slate-600 border border-slate-900/10">
+                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container text-on-surface-variant border border-outline-variant/20">
                                                 {subjects.find(s => s.id === post.category)?.title || post.category}
                                             </span>
                                         )}
                                         {post.reported && (
-                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">
+                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-error/10 text-error border border-error/20">
                                                 <Flag className="w-3 h-3 inline mr-0.5" />Reported
                                             </span>
                                         )}
@@ -208,7 +208,7 @@ export default function ForumPage() {
                                         {post.title}
                                     </h3>
                                     <p className="text-sm text-on-surface-variant mt-1 line-clamp-2 font-medium">{post.body}</p>
-                                    <div className="flex items-center gap-4 mt-3 text-xs text-gray-600">
+                                    <div className="flex items-center gap-4 mt-3 text-xs text-on-surface-variant">
                                         <span>{post.author}</span>
                                         <span>{timeAgo(post.timestamp)}</span>
                                         <span className="flex items-center gap-1">
@@ -218,7 +218,7 @@ export default function ForumPage() {
                                     </div>
                                 </div>
 
-                                <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-indigo-400 transition-colors flex-shrink-0 mt-2" />
+                                <ChevronRight className="w-5 h-5 text-on-surface-variant group-hover:text-primary transition-colors flex-shrink-0 mt-2" />
                             </div>
                         </Link>
                     ))}
@@ -229,20 +229,20 @@ export default function ForumPage() {
             {showUsernamePrompt && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowUsernamePrompt(false)} />
-                    <div className="relative w-full max-w-sm glass-panel rounded-2xl border border-slate-900/10 shadow-2xl p-8 animate-in zoom-in-95 fade-in duration-300">
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">Set Your Name</h3>
-                        <p className="text-slate-600 text-sm mb-5">This name will appear on your posts.</p>
+                    <div className="relative w-full max-w-sm bg-surface-container-lowest rounded-3xl border border-outline-variant/15 shadow-2xl p-8 animate-in zoom-in-95 fade-in duration-300">
+                        <h3 className="text-xl font-bold text-on-surface mb-2 font-headline">Set Your Name</h3>
+                        <p className="text-on-surface-variant text-sm mb-5">This name will appear on your posts.</p>
                         <input
                             type="text"
                             value={tempName}
                             onChange={(e) => setTempName(e.target.value)}
                             placeholder="Your name"
-                            className="w-full px-4 py-3 rounded-xl bg-slate-900/5 border border-slate-900/10 text-slate-900 placeholder:text-gray-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all text-sm mb-5"
+                            className="w-full px-4 py-3 rounded-xl bg-surface border border-outline-variant/30 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all text-sm mb-5"
                             onKeyDown={(e) => e.key === "Enter" && confirmUsername()}
                         />
                         <button
                             onClick={confirmUsername}
-                            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-slate-900 font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all text-sm hover-lift"
+                            className="w-full py-3 rounded-xl bg-primary text-on-primary font-bold hover:shadow-lg transition-all text-sm hover-lift"
                         >
                             Save & Continue
                         </button>
