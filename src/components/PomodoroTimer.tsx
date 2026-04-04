@@ -251,17 +251,40 @@ export default function PomodoroTimer({ onComplete, subject }: PomodoroTimerProp
                         </div>
                     </div>
                 ) : (
-                    <div className="col-span-1 md:col-span-2 bg-surface-container-low rounded-xl p-6 flex flex-col justify-between h-44 shadow-sm border border-outline-variant/20">
-                        <div className="flex justify-between items-start">
+                    <div className="col-span-1 md:col-span-2 bg-surface-container-low rounded-xl p-5 sm:p-6 flex flex-col justify-between h-44 sm:h-48 shadow-sm border border-outline-variant/20 relative overflow-hidden group">
+                        {/* Quick Connectors Overlay */}
+                        <div className="absolute top-2 right-2 flex gap-1 z-20">
+                             <a href="https://music.youtube.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-red-500 hover:bg-red-50 transition-all hover:scale-110 shadow-sm border border-outline-variant/10">
+                                <ExternalLink className="w-4 h-4" />
+                             </a>
+                             <a href="https://open.spotify.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-green-500 hover:bg-green-50 transition-all hover:scale-110 shadow-sm border border-outline-variant/10">
+                                <ExternalLink className="w-4 h-4" />
+                             </a>
+                        </div>
+
+                        <div className="flex justify-between items-start pr-16">
                             <div className="animate-in slide-in-from-left-2 duration-500">
                                 <p className="text-[10px] font-black font-headline uppercase tracking-[0.2em] text-on-surface-variant mb-1">Ambient Soundscape</p>
-                                <h3 className="text-2xl font-black font-headline text-primary">{(streams as any)[selectedStream]?.name || "Silence"}</h3>
+                                <div className="flex items-center gap-3">
+                                    <h3 className="text-2xl font-black font-headline text-primary">{(streams as any)[selectedStream]?.name || "Silence"}</h3>
+                                    <div className="flex gap-1">
+                                        {["none", "lofi", "nature"].map(s => (
+                                            <button 
+                                                key={s} 
+                                                onClick={() => setSelectedStream(s)}
+                                                className={`w-4 h-4 rounded-full border transition-all ${selectedStream === s ? 'bg-primary border-primary scale-125' : 'bg-surface-container-highest border-outline-variant/20 hover:scale-110'}`}
+                                                title={`Switch to ${s}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlayingAudio ? 'bg-primary/20 text-primary animate-spin-slow' : 'bg-surface-container text-on-surface-variant'}`}>
                                 <Music className="w-4 h-4" />
                             </div>
                         </div>
-                        <div className="flex items-center gap-6 mt-4">
+                        
+                        <div className="flex items-center gap-4 sm:gap-6 mt-2 sm:mt-4">
                             <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface transition-colors" title="Previous Session Title">
                                 <SkipBack className="w-4 h-4" />
                             </button>
@@ -275,11 +298,11 @@ export default function PomodoroTimer({ onComplete, subject }: PomodoroTimerProp
                             <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface transition-colors" title="Next Session Title">
                                 <SkipForward className="w-4 h-4" />
                             </button>
-                            <div className="flex-grow flex items-center gap-3 ml-4">
-                                <button onClick={() => setVolume(v => v === 0 ? 70 : 0)} className="text-on-surface-variant hover:text-on-surface transition-colors">
+                            <div className="flex-grow flex items-center gap-3 ml-2 sm:ml-4 overflow-hidden">
+                                <button onClick={() => setVolume(v => v === 0 ? 70 : 0)} className="text-on-surface-variant hover:text-on-surface transition-colors shrink-0">
                                     {volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                                 </button>
-                                <div className="h-1.5 flex-grow bg-outline-variant/30 rounded-full overflow-hidden relative cursor-pointer group">
+                                <div className="h-1.5 flex-grow bg-outline-variant/30 rounded-full overflow-hidden relative cursor-pointer group/vol">
                                     <input 
                                         type="range" 
                                         min="0" 
@@ -290,7 +313,7 @@ export default function PomodoroTimer({ onComplete, subject }: PomodoroTimerProp
                                     />
                                     <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${volume}%` }}></div>
                                 </div>
-                                <span className="text-[10px] font-bold text-on-surface-variant w-6 tabular-nums">{volume}%</span>
+                                <span className="text-[10px] font-bold text-on-surface-variant w-6 tabular-nums hidden sm:block">{volume}%</span>
                             </div>
                         </div>
                     </div>
